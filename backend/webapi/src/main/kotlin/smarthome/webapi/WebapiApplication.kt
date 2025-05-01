@@ -1,4 +1,4 @@
-package smarthome.webapi.webapi
+package smarthome.webapi
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
