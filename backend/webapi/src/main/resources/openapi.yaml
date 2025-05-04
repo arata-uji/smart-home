@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI 3.0
+  version: 1.0.12
+paths:
+  /hello_world:
+    get:
+      tags:
+        - HelloWorldGet
+      summary: Returns a Hello World message
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Hello, World!
