@@ -9,7 +9,7 @@ paths:
         - HelloWorldGet
       summary: Returns a Hello World message
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -19,3 +19,32 @@ paths:
                   message:
                     type: string
                     example: Hello, World!
+  /mqtt_publish:
+    post:
+      tags:
+        - MqttPublishPost
+      summary: MQTTブローカにメッセージをpublishする
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic:
+                  type: string
+                  example: "room-01/light"
+                payload:
+                  type: string
+                  example: "light:on"
+      responses:
+        "200":
+          description: publish成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OK"
