@@ -23,7 +23,7 @@ class MqttPublishPostControllerTest {
     val actual = controller.mqttPublishPost(request).body
 
     // then
-    val expected = MqttPublishPost200Response(message = "MQTT Publish Success")
+    val expected = MqttPublishPost200Response(message = "MQTT Publish Scheduled")
     assertEquals(expected, actual)
   }
 }

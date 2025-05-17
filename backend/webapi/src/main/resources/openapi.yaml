@@ -30,13 +30,16 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - topic
+                - payload
               properties:
                 topic:
                   type: string
                   example: "room-01/light"
                 payload:
                   type: string
-                  example: "light:on"
+                  example: "light:switch"
       responses:
         "200":
           description: publish成功
@@ -47,4 +50,4 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "MQTT Publish Success"
+                    example: "MQTT Publish Scheduled"
