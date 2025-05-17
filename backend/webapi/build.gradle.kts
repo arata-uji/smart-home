@@ -19,9 +19,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("io.swagger.core.v3:swagger-annotations:2.2.30")
-  implementation("org.springdoc:springdoc-openapi-ui:1.8.0")
   implementation("javax.validation:validation-api:2.0.1.Final")
   implementation("javax.servlet:javax.servlet-api:4.0.1")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -39,6 +39,7 @@ openApiGenerate {
   apiPackage.set("smarthome.api")
   modelPackage.set("smarthome.model")
   invokerPackage.set("smarthome.invoker")
+  packageName.set("smarthome") // 追加
   configOptions.set(
       mapOf(
           "interfaceOnly" to "true",
@@ -48,15 +49,20 @@ openApiGenerate {
   )
 }
 
-tasks.named("openApiGenerate").configure { outputs.upToDateWhen { false } }
-
 sourceSets {
   main { kotlin { srcDir("${layout.buildDirectory.get().asFile}/generated/src/main/kotlin") } }
 }
 
+tasks.named("openApiGenerate").configure { outputs.upToDateWhen { false } }
+
+tasks.named("compileKotlin").configure { dependsOn("openApiGenerate") }
+
 // Spottless configuration
 spotless {
-  kotlin { ktfmt() }
+  kotlin {
+    ktfmt()
+    targetExclude("build/generated/**/*.kt") // 生成されたコードを除外
+  }
   kotlinGradle {
     target("*.kts")
     ktfmt()

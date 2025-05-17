@@ -6,7 +6,7 @@ import smarthome.model.MqttPublishPostRequest
 
 @Service
 class MqttPublishPostService {
-    fun execute(request: MqttPublishPostRequest): MqttPublishPost200Response {
-        return MqttPublishPost200Response(message = "MQTT Publish Success")
-    }
+  fun execute(request: MqttPublishPostRequest): MqttPublishPost200Response {
+    return MqttPublishPost200Response(message = "MQTT Publish Success")
+  }
 }
