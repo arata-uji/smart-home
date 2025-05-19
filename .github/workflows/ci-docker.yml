@@ -23,9 +23,12 @@ jobs:
       - name: Set up JDK 17 (Corretto)
         uses: actions/setup-java@v3
         with:
-          distribution: 'corretto'
-          java-version: '17'
+          distribution: "corretto"
+          java-version: "17"
           cache: gradle
+
+      - name: Ensure gradlew is executable
+        run: chmod +x backend/webapi/gradlew
 
       - name: Build with Gradle
         working-directory: backend/webapi
