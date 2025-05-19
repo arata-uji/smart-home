@@ -1,11 +1,11 @@
-# ── Builder ステージ (Amazon Corretto 17)
+# ── Builder ステージ
 FROM amazoncorretto:17 AS builder
 WORKDIR /workspace
 COPY . .
 RUN ./gradlew clean bootJar --no-daemon
 
-# ── Runtime ステージ (軽量 JRE)
-FROM amazoncorretto:17-jre AS runtime
+# ── Runtime ステージ
+FROM amazoncorretto:17 AS runtime
 WORKDIR /app
 COPY --from=builder /workspace/build/libs/*.jar app.jar
 EXPOSE 8080
