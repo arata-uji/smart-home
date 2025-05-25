@@ -54,6 +54,3 @@ jobs:
           tags: |
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/smart-home-be:latest
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/smart-home-be:${{ github.sha }}
-
-      - name: Show image size
-        run: docker image ls docker.io/${{ secrets.DOCKERHUB_USERNAME }}/smart-home-be:latest
