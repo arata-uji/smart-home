@@ -1,8 +1,11 @@
-name: CI & Docker Build
+name: Backend CI & Docker Build
 
 on:
   push:
     branches: [main, develop]
+    paths:
+      - 'backend/webapi/**'
+      - '.github/workflows/ci-docker-be.yml'
   pull_request:
     branches: [main]
 
