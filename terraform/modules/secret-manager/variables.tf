@@ -1,19 +1,19 @@
 variable "project" {
+  description = "GCPプロジェクトID"
   type        = string
-  description = "GCP プロジェクト ID"
 }
 
-variable "mqtt_broker_url_value" {
+variable "mqtt_broker_url" {
+  description = "MQTTブローカーのURL"
   type        = string
-  description = "MQTTブローカURL"
 }
 
-variable "mqtt_username_value" {
+variable "mqtt_username" {
+  description = "MQTTブローカーのユーザー名"
   type        = string
-  description = "MQTTユーザー名"
 }
 
-variable "mqtt_password_value" {
+variable "mqtt_password" {
+  description = "MQTTブローカーのパスワード"
   type        = string
-  description = "MQTTパスワード"
 }

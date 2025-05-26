@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.5.0"
 
   backend "gcs" {
-    bucket = "TFSTATE_BUCKET_NAME"
+    # terraform init -backend-config="bucket=***"
     prefix = "smart-home/terraform/state"
   }
 
