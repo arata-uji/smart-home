@@ -1,20 +1,20 @@
-name: CI & Docker Build
+name: Backend CI & Docker Build
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ main, develop ]
+    paths:
+      - "backend/webapi/**"
+      - ".github/workflows/ci-docker-be.yml"
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
-    environment: production
 
     permissions:
       contents: read
-      packages: write
-      id-token: write
 
     steps:
       - name: Checkout code
@@ -37,23 +37,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: backend/webapi
           file: backend/webapi/Dockerfile
-          builder: default
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/smart-home:latest
-            ghcr.io/${{ github.repository_owner }}/smart-home:${{ github.sha }}
-
-      - name: Show image size
-        run: docker image ls ghcr.io/${{ github.repository_owner }}/smart-home:latest
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/smart-home-be:latest
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/smart-home-be:${{ github.sha }}
