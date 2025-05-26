@@ -2,17 +2,16 @@ name: Backend CI & Docker Build
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ main, develop ]
     paths:
-      - 'backend/webapi/**'
-      - '.github/workflows/ci-docker-be.yml'
+      - "backend/webapi/**"
+      - ".github/workflows/ci-docker-be.yml"
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
-    environment: production
 
     permissions:
       contents: read
