@@ -23,9 +23,6 @@ jobs:
 
     env:
       TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
-      TF_VAR_mqtt_broker_url: ${{ secrets.MQTT_BROKER_URL }}
-      TF_VAR_mqtt_username: ${{ secrets.MQTT_USERNAME }}
-      TF_VAR_mqtt_password: ${{ secrets.MQTT_PASSWORD }}
 
     steps:
       - name: Checkout
