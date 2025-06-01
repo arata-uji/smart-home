@@ -4,6 +4,10 @@ data "google_compute_address" "mqtt_broker_ip" {
   region  = var.region
 }
 
+data "google_compute_default_service_account" "default" {
+  project = var.project
+}
+
 resource "google_compute_instance" "mqtt_broker" {
   project      = var.project
   zone         = var.zone
@@ -23,6 +27,13 @@ resource "google_compute_instance" "mqtt_broker" {
       size  = 30
       type  = "pd-standard"
     }
+  }
+
+  service_account {
+    email = data.google_compute_default_service_account.default.email
+    scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
   }
 
   metadata = {
