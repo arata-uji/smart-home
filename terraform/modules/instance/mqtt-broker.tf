@@ -39,4 +39,6 @@ resource "google_compute_instance" "mqtt_broker" {
   metadata = {
     startup-script = var.startup_script
   }
+
+  allow_stopping_for_update = true
 }
