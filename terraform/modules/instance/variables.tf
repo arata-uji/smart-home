@@ -49,21 +49,8 @@ variable "startup_script" {
     mosquitto_passwd -b /etc/mosquitto/passwd controller-01 $${MQTT_CTRL_PASSWORD}
     chown mosquitto:mosquitto /etc/mosquitto/passwd
 
-    # 設定ファイルの書き換え
-    cat <<EOF > /etc/mosquitto/mosquitto.conf
-    persistence true
-    persistence_location /var/lib/mosquitto/
-    log_dest file /var/log/mosquitto/mosquitto.log
-    include_dir /etc/mosquitto/conf.d
-    user mosquitto
-    listener 1883
-    allow_anonymous false
-    password_file /etc/mosquitto/passwd
-    acl_file /etc/mosquitto/acl
-    EOF
-
     # ACL設定
-    cat <<EOF > /etc/mosquitto/acl
+    cat <<-EOF > /etc/mosquitto/acl
     user web
     topic write room-01/light
     topic write room-01/aircon
@@ -81,6 +68,22 @@ variable "startup_script" {
 
     chown mosquitto:mosquitto /etc/mosquitto/acl
 
+    # 設定ファイルの書き換え
+    cat <<-EOF > /etc/mosquitto/mosquitto.conf
+    persistence true
+    persistence_location /var/lib/mosquitto/
+    log_dest file /var/log/mosquitto/mosquitto.log
+    include_dir /etc/mosquitto/conf.d
+    user mosquitto
+    listener 1883
+    allow_anonymous false
+    password_file /etc/mosquitto/passwd
+    acl_file /etc/mosquitto/acl
+    EOF
+
+    chown mosquitto:mosquitto /etc/mosquitto/mosquitto.conf
+
+    # mosquittoを再起動
     systemctl enable mosquitto
     systemctl restart mosquitto
   EOT
