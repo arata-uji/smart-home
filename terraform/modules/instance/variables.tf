@@ -39,8 +39,6 @@ variable "startup_script" {
     #!/bin/bash
     apt update
     apt install -y mosquitto mosquitto-clients
-    systemctl enable mosquitto
-    systemctl start mosquitto
 
     # Secretを取得
     MQTT_WEB_PASSWORD=$(gcloud secrets versions access latest --secret="MQTT_WEB_PASSWORD" --format='get(payload.data)' | base64 --decode)
@@ -51,7 +49,7 @@ variable "startup_script" {
     mosquitto_passwd -b /etc/mosquitto/passwd controller-01 $${MQTT_CTRL_PASSWORD}
     chown mosquitto:mosquitto /etc/mosquitto/passwd
 
-    # 設定ファイル配置
+    # 設定ファイルの書き換え
     cat <<EOF > /etc/mosquitto/mosquitto.conf
     persistence true
     persistence_location /var/lib/mosquitto/
@@ -82,5 +80,8 @@ variable "startup_script" {
     EOF
 
     chown mosquitto:mosquitto /etc/mosquitto/acl
+
+    systemctl enable mosquitto
+    systemctl restart mosquitto
   EOT
 }
