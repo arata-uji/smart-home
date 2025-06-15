@@ -39,6 +39,9 @@ variable "startup_script" {
     #!/bin/bash
     apt update
     apt install -y mosquitto mosquitto-clients
+    set -euxo pipefail
+    exec > /var/log/startup-script.log 2>&1
+    echo "===== startup-script begin ====="
 
     # Secretを取得
     MQTT_WEB_PASSWORD=$(gcloud secrets versions access latest --secret="MQTT_WEB_PASSWORD" --format='get(payload.data)' | base64 --decode)
@@ -86,5 +89,6 @@ variable "startup_script" {
     # mosquittoを再起動
     systemctl enable mosquitto
     systemctl restart mosquitto
+    echo "===== startup-script end ====="
   EOT
 }
