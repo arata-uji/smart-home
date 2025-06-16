@@ -1,21 +1,21 @@
-module "secret-manager" {
+module "secret_manager" {
   source  = "./modules/secret-manager"
   project = var.project
 }
 
-module "service-account" {
+module "service_account" {
   source  = "./modules/service-account"
   project = var.project
 }
 
-module "mqtt-broker" {
+module "mqtt_broker" {
   source  = "./modules/instance"
   project = var.project
   region  = var.region
   zone    = var.zone
 }
 
-module "cloud-run" {
+module "cloud_run" {
   source = "./modules/cloud-run"
   region = var.region
 }
