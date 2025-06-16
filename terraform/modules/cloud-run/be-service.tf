@@ -1,4 +1,4 @@
-resource "google_cloud_run_service" "be-service" {
+resource "google_cloud_run_service" "be_service" {
   name     = var.be_service_name
   location = var.region
 
@@ -35,4 +35,11 @@ resource "google_cloud_run_service" "be-service" {
       }
     }
   }
+}
+
+resource "google_cloud_run_service_iam_member" "public_invoker" {
+  service  = google_cloud_run_service.be_service.name
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "allUsers"
 }
