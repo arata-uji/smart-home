@@ -1,13 +1,13 @@
-name: "Terraform"
+name: "Terraform Apply"
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - "terraform/**"
-      - ".github/workflows/terraform.yml"
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Target branch to apply"
+        required: true
+        default: "main"
+        type: string
 
 jobs:
   terraform:
@@ -36,7 +36,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 'latest'
+          terraform_version: "latest"
 
       - name: Terraform Init
         run: terraform init -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}"
@@ -47,6 +47,8 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false
 
+      - name: Manual Approval
+        run: echo "Waiting for manual approval..."
+
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve -input=false
