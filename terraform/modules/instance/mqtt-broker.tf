@@ -30,10 +30,8 @@ resource "google_compute_instance" "mqtt_broker" {
   }
 
   service_account {
-    email = data.google_compute_default_service_account.default.email
-    scopes = [
-      "https://www.googleapis.com/auth/cloud-platform",
-    ]
+    email  = google_service_account.mqtt_broker_sa.email
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
   metadata = {
