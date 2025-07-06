@@ -21,9 +21,3 @@ resource "google_project_iam_member" "sa_metric_writer" {
   role    = "roles/monitoring.metricWriter"
   member  = "serviceAccount:${google_service_account.run_sa.email}"
 }
-
-resource "google_project_iam_member" "sa_run_service_admin" {
-  project = var.project
-  role    = "roles/run.serviceAdmin"
-  member  = "serviceAccount:${google_service_account.run_sa.email}"
-}
