@@ -4,10 +4,6 @@ data "google_compute_address" "mqtt_broker_ip" {
   region  = var.region
 }
 
-data "google_compute_default_service_account" "default" {
-  project = var.project
-}
-
 resource "google_compute_instance" "mqtt_broker" {
   project      = var.project
   zone         = var.zone
@@ -34,9 +30,7 @@ resource "google_compute_instance" "mqtt_broker" {
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
-  metadata = {
-    startup-script = var.startup_script
-  }
+  metadata_startup_script = var.startup_script
 
   allow_stopping_for_update = true
 }
