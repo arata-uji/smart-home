@@ -2,12 +2,6 @@ name: "Terraform Apply"
 
 on:
   workflow_dispatch:
-    inputs:
-      target_branch:
-        description: "Target branch to apply"
-        required: true
-        default: "main"
-        type: string
 
 jobs:
   terraform:
