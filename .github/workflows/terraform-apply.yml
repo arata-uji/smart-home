@@ -1,26 +1,23 @@
-name: "Terraform Apply"
+name: Terraform Apply
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
+
+defaults:
+  run:
+    working-directory: terraform
+
 jobs:
   terraform-plan:
-    name: "Terraform Plan"
+    name: Terraform Plan
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: terraform
-
-    permissions:
-      contents: read
-      id-token: write
-
-    env:
-      TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
-
-    outputs:
-      plan_exitcode: ${{ steps.plan.outputs.exitcode }}
 
     steps:
       - name: Checkout
@@ -45,36 +42,34 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          # Exit code 0 = No changes
-          # Exit code 1 = Error
-          # Exit code 2 = Changes present
-          terraform plan -input=false -detailed-exitcode -out=tfplan || if [ $? -eq 2 ]; then true; else false; fi
-          echo "has_changes=$([ $? -eq 2 ] && echo 'true' || echo 'false')" >> "$GITHUB_OUTPUT"
+          terraform plan -input=false -detailed-exitcode -out=tfplan
+          CODE=$?
+          if [ $CODE -eq 1 ]; then
+            echo "Terraform plan failed"
+            exit 1
+          fi
+          if [ $CODE -eq 2 ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Upload Plan
+      - name: Upload Plan Artifact
+        if: steps.plan.outputs.has_changes == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
-          path: terraform/tfplan
-          retention-days: 1
+          path: tfplan
+
+    outputs:
+      has_changes: ${{ steps.plan.outputs.has_changes }}
+
 
   terraform-apply:
-    name: "Terraform Apply"
+    name: Terraform Apply
     needs: terraform-plan
     runs-on: ubuntu-latest
     environment: production
-
-    defaults:
-      run:
-        working-directory: terraform
-
-    permissions:
-      contents: read
-      id-token: write
-
-    env:
-      TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
-
     if: needs.terraform-plan.outputs.has_changes == 'true'
 
     steps:
@@ -94,11 +89,11 @@ jobs:
       - name: Terraform Init
         run: terraform init -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}"
 
-      - name: Download Plan
+      - name: Download Plan Artifact
         uses: actions/download-artifact@v4
         with:
           name: tfplan
-          path: terraform
+          path: .
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false tfplan
