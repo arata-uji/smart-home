@@ -72,7 +72,7 @@ jobs:
     env:
       TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
 
-    if: needs.terraform-plan.outputs.plan_exitcode == "2"
+    if: needs.terraform-plan.outputs.plan_exitcode == '2'
 
     steps:
       - name: Checkout
