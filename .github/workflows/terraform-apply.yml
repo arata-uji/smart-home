@@ -49,7 +49,7 @@ jobs:
           echo "exitcode=$?" >> $GITHUB_OUTPUT
 
       - name: Upload Plan
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: terraform/tfplan
@@ -92,7 +92,7 @@ jobs:
         run: terraform init -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}"
 
       - name: Download Plan
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: tfplan
           path: terraform
