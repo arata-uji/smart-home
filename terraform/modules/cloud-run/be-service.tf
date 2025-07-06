@@ -2,12 +2,6 @@ resource "google_cloud_run_service" "be_service" {
   name     = var.be_service_name
   location = var.region
 
-  metadata {
-    annotations = {
-      "run.googleapis.com/invoker-iam-disabled" = "true"
-    }
-  }
-
   template {
     spec {
       containers {
