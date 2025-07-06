@@ -13,18 +13,12 @@ resource "google_project_iam_member" "gha_storage" {
 
 resource "google_project_iam_member" "gha_terraform" {
   project = var.project
-  role    = "roles/editor"
+  role    = "roles/owner"
   member  = "serviceAccount:${google_service_account.gha.email}"
 }
 
 resource "google_project_iam_member" "gha_secrets" {
   project = var.project
   role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.gha.email}"
-}
-
-resource "google_project_iam_member" "gha_run_admin" {
-  project = var.project
-  role    = "roles/run.admin"
   member  = "serviceAccount:${google_service_account.gha.email}"
 }
