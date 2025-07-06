@@ -13,7 +13,7 @@ resource "google_project_iam_member" "gha_storage" {
 
 resource "google_project_iam_member" "gha_terraform" {
   project = var.project
-  role    = "roles/owner"
+  role    = "roles/editor"
   member  = "serviceAccount:${google_service_account.gha.email}"
 }
 
