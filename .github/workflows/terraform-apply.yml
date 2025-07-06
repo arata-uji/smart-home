@@ -45,8 +45,11 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -input=false -detailed-exitcode -out=tfplan
-          echo "exitcode=$?" >> $GITHUB_OUTPUT
+          # Exit code 0 = No changes
+          # Exit code 1 = Error
+          # Exit code 2 = Changes present
+          terraform plan -input=false -detailed-exitcode -out=tfplan || if [ $? -eq 2 ]; then true; else false; fi
+          echo "has_changes=$([ $? -eq 2 ] && echo 'true' || echo 'false')" >> "$GITHUB_OUTPUT"
 
       - name: Upload Plan
         uses: actions/upload-artifact@v4
@@ -72,7 +75,7 @@ jobs:
     env:
       TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
 
-    if: needs.terraform-plan.outputs.plan_exitcode == '2'
+    if: needs.terraform-plan.outputs.has_changes == 'true'
 
     steps:
       - name: Checkout
