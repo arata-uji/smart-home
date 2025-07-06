@@ -41,6 +41,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
+        continue-on-error: true
         run: terraform plan -input=false -detailed-exitcode
 
     outputs:
