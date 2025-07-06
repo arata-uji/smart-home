@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  terraform:
+  terraform-plan:
+    name: "Terraform Plan"
     runs-on: ubuntu-latest
 
     defaults:
@@ -17,6 +18,9 @@ jobs:
 
     env:
       TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
+
+    outputs:
+      plan_exitcode: ${{ steps.plan.outputs.exitcode }}
 
     steps:
       - name: Checkout
@@ -39,10 +43,59 @@ jobs:
         run: terraform fmt -check
 
       - name: Terraform Plan
-        run: terraform plan -input=false
+        id: plan
+        run: |
+          terraform plan -input=false -detailed-exitcode -out=tfplan
+          echo "exitcode=$?" >> $GITHUB_OUTPUT
 
-      - name: Manual Approval
-        run: echo "Waiting for manual approval..."
+      - name: Upload Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: terraform/tfplan
+          retention-days: 1
+
+  terraform-apply:
+    name: "Terraform Apply"
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    environment: production
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      TF_VAR_project: ${{ secrets.GCP_PROJECT_ID }}
+
+    if: needs.terraform-plan.outputs.plan_exitcode == "2"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: "latest"
+
+      - name: Terraform Init
+        run: terraform init -backend-config="bucket=${{ secrets.TFSTATE_BUCKET_NAME }}"
+
+      - name: Download Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+          path: terraform
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false tfplan
