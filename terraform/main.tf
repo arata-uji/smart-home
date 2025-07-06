@@ -16,6 +16,7 @@ module "mqtt_broker" {
 }
 
 module "cloud_run" {
-  source = "./modules/cloud-run"
-  region = var.region
+  source  = "./modules/cloud-run"
+  project = var.project
+  region  = var.region
 }
