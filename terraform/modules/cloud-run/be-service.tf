@@ -2,13 +2,13 @@ resource "google_cloud_run_service" "be_service" {
   name     = var.be_service_name
   location = var.region
 
-  metadata {
-    annotations = {
-      "run.googleapis.com/health-check-path" = "/actuator/health"
-    }
-  }
-
   template {
+    metadata {
+      annotations = {
+        "run.googleapis.com/health-check-path" = "/actuator/health"
+      }
+    }
+
     spec {
       service_account_name = google_service_account.run_sa.email
 
