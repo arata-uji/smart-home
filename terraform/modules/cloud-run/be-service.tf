@@ -1,6 +1,7 @@
 resource "google_cloud_run_service" "be_service" {
-  name     = var.be_service_name
-  location = var.region
+  name                       = var.be_service_name
+  location                   = var.region
+  autogenerate_revision_name = true
 
   template {
     metadata {
