@@ -20,3 +20,8 @@ module "cloud_run" {
   project = var.project
   region  = var.region
 }
+
+module "firewall" {
+  source  = "./modules/firewall"
+  project = var.project
+}
