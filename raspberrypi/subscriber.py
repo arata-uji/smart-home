@@ -12,9 +12,9 @@ BROKER_HOST = ""  # TODO: MQTTブローカーのホスト名またはIPアドレ
 BROKER_PORT = 1883
 MQTT_USER = "" # TODO: MQTTブローカーのコントローラー側のユーザー名
 MQTT_PASS = "" # TODO: MQTTブローカーのコントローラー側のパスワード
-TOPICS = [("room-01/light", 0), ("room-01/aircon", 0)]  # QoS=0に変更（速度重視）
+TOPICS = [("living/light", 0), ("living/aircon", 0)]  # QoS=0に変更（速度重視）
 GPIO_PIN = 17  # 赤外線送信用GPIO
-CODES_FILE = "/home/raspberrypi/codes/light.json"
+CODES_FILE = "/home/raspberrypi/codes.json"
 FREQ = 38.0  # キャリア周波数 (kHz)
 GAP_MS = 50  # 従来の100msから50msに短縮（速度重視）
 # ======================

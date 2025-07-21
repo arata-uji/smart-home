@@ -42,32 +42,67 @@ Raspberry Piに固定IPアドレスを設定することで、常に同じIPア�
 
 ### SSH接続
 固定化したIPアドレスと初期設定画面で設定した情報を使用して、SSHでRaspberry Piに接続する。以下、接続例を示す。
-```bash
+```
 ssh raspberrypi@<固定IPアドレス>
 # パスワードは初期設定時に設定したものを使用
 ```
 
-### 必要なパッケージのインストール
+### パッケージ、依存ライブラリのインストール
 MQTT関連のパッケージをインストールするために、以下のコマンドを実行する。
-```bash
+- pigpio
+```
 sudo apt update
 sudo apt install mosquitto mosquitto-clients
 sudo systemctl enable mosquitto
 sudo systemctl start mosquitto
 ```
+- Pythonライブラリ
+```
+sudo apt install python3-pip
+pip3 install paho-mqtt pigpio
+```
 
 ### 動作確認
 Subscribeが正常に動作するか確認するために、以下のコマンドを実行する。
-```bash
+```
 mosquitto_sub -h <MQTTブローカのIPアドレス> -t room-01/light -u controller-01 -P <コントローラ側のパスワード>
 ```
 
 ### スクリプト
 以下2つのPythonスクリプトを用意する。
-- irrp.py: 赤外線信号を学習し、subscriber.pyからの指示に従って赤外線信号を出力する。
+- irrp.py: 赤外線信号を学習し、赤外線信号を出力する。
 - subscriber.py: MQTT Subscribeを行い、受信したメッセージに応じて出力する赤外線信号を制御する。
 
-
-### 赤外線の学習
+### 赤外線信号の学習
 赤外線信号を学習するために、以下の手順を実行する。
-1. 赤外線モジュールをRaspberry Piに接続した状態で`./irrp.py -r <GPIOピン番号>`を実行する。
+1. 赤外線モジュールをRaspberry Piに接続した状態で`irrp.py`を実行する。以下、実行例を示す。
+```
+python3 irrp.py -r -g18 -f codes.json aircon:cool-on
+```
+| オプション         | 意味                                           |
+| ------------------ | ---------------------------------------------- |
+| -r または --record | 記録（学習）モード                             |
+| -g18               | IR受信機が接続されているGPIO番号（例: GPIO18） |
+| -f codes.json      | 学習したコードを保存するファイル               |
+| cool-on            | 学習するボタンのラベル                         |
+
+2. 「Press key for 'aircon:cool-on'」と表示されたら、該当するリモコンのボタンを1回押す。
+3. 「Press key for 'aircon:cool-on' to confirm」と出るので、もう1回同じボタンを押して確認。
+4. `codes.json`に、以下のような形式で保存される。
+```json
+{
+  "aircon:cool-on": [9000, 4500, 600, 550, ...]
+}
+```
+
+### 赤外線信号の出力
+学習した赤外線信号を出力するためには、以下のように`irrp.py`を実行する。
+```
+python3 irrp.py -p -g17 -f codes.json aircon:cool-on
+```
+
+### MQTT Subscribeの実行
+上記の動作確認まで完了したら、MQTT Subscribeを実行するために`subscriber.py`を起動する。
+```
+python3 subscriber.py
+```
