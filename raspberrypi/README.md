@@ -84,7 +84,7 @@ python3 irrp.py -r -g18 -f codes.json aircon:cool-on
 | -r または --record | 記録（学習）モード                             |
 | -g18               | IR受信機が接続されているGPIO番号（例: GPIO18） |
 | -f codes.json      | 学習したコードを保存するファイル               |
-| cool-on            | 学習するボタンのラベル                         |
+| aircon:cool-on     | 学習するボタンのラベル                         |
 
 2. 「Press key for 'aircon:cool-on'」と表示されたら、該当するリモコンのボタンを1回押す。
 3. 「Press key for 'aircon:cool-on' to confirm」と出るので、もう1回同じボタンを押して確認。
