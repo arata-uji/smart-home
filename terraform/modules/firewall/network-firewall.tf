@@ -77,11 +77,11 @@ resource "google_compute_network_firewall_policy_rule" "deny_known_malicious_ing
   }
 }
 
-# 例：1004 (egress) — Deny known malicious IPs (egress)
 resource "google_compute_network_firewall_policy_rule" "deny_known_malicious_egress" {
   project         = var.project
   firewall_policy = google_compute_network_firewall_policy.policy.id
 
+  description    = "Deny known malicious IPs egress traffic"
   priority       = 1004
   direction      = "EGRESS"
   action         = "deny"
@@ -96,11 +96,11 @@ resource "google_compute_network_firewall_policy_rule" "deny_known_malicious_egr
   }
 }
 
-# 例：1005 (ingress) — Deny sanctioned countries (geolocation)
 resource "google_compute_network_firewall_policy_rule" "deny_sanctioned_countries" {
   project         = var.project
   firewall_policy = google_compute_network_firewall_policy.policy.id
 
+  description    = "Deny sanctioned countries ingress traffic"
   priority       = 1005
   direction      = "INGRESS"
   action         = "deny"
@@ -115,13 +115,32 @@ resource "google_compute_network_firewall_policy_rule" "deny_sanctioned_countrie
   }
 }
 
+resource "google_compute_network_firewall_policy_rule" "allow_iap_ssh" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  description    = "Allow SSH from IAP TCP forwarding proxies"
+  priority       = 2000
+  direction      = "INGRESS"
+  action         = "allow"
+  enable_logging = false
+
+  match {
+    src_ip_ranges = ["35.235.240.0/20"]
+
+    layer4_configs {
+      ip_protocol = "tcp"
+      ports       = ["22"]
+    }
+  }
+}
 
 resource "google_compute_network_firewall_policy_rule" "allow_http_https_mqtt" {
   project         = var.project
   firewall_policy = google_compute_network_firewall_policy.policy.id
 
   description    = "Allow HTTP/HTTPS and MQTT(1883) from anywhere"
-  priority       = 2000
+  priority       = 2001
   direction      = "INGRESS"
   action         = "allow"
   enable_logging = false
