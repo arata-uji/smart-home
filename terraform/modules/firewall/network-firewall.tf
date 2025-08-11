@@ -115,7 +115,7 @@ resource "google_compute_network_firewall_policy_rule" "deny_sanctioned_countrie
   }
 }
 
-resource "google_compute_network_firewall_policy_rule" "allow_iap_ssh" {
+resource "google_compute_network_firewall_policy_rule" "allow_ssh_ingress_from_iap" {
   project         = var.project
   firewall_policy = google_compute_network_firewall_policy.policy.id
 
