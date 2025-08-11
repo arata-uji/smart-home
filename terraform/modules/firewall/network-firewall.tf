@@ -23,9 +23,14 @@ resource "google_compute_network_firewall_policy_rule" "allow_http_https_mqtt" {
   }
 }
 
+data "google_compute_network" "default" {
+  name    = "default"
+  project = var.project
+}
+
 resource "google_compute_network_firewall_policy_association" "assoc_to_project" {
   project           = var.project
   firewall_policy   = google_compute_network_firewall_policy.policy.id
-  attachment_target = var.project
+  attachment_target = data.google_compute_network.default.self_link
   name              = "${var.name}-assoc"
 }
