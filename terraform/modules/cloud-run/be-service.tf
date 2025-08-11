@@ -7,7 +7,6 @@ resource "google_cloud_run_service" "be_service" {
     metadata {
       annotations = {
         "run.googleapis.com/health-check-path" = "/actuator/health"
-        "deployment-timestamp"                 = timestamp()
       }
     }
 

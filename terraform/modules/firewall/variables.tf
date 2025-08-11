@@ -6,5 +6,5 @@ variable "project" {
 variable "name" {
   description = "ファイアウォールポリシー名"
   type        = string
-  default     = "allow-http-https-mqtt"
+  default     = "policy"
 }
