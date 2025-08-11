@@ -23,13 +23,9 @@ resource "google_compute_network_firewall_policy_rule" "allow_http_https_mqtt" {
   }
 }
 
-data "google_project" "smart-home" {
-  project_id = var.project
-}
-
 resource "google_compute_network_firewall_policy_association" "assoc_to_project" {
   project           = var.project
   firewall_policy   = google_compute_network_firewall_policy.policy.id
-  attachment_target = "projects/${data.google_project.smart-home.number}"
+  attachment_target = var.project
   name              = "${var.name}-assoc"
 }
