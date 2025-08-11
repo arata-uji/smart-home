@@ -1,48 +1,53 @@
-resource "google_cloud_run_service" "be_service" {
-  name                       = var.be_service_name
-  location                   = var.region
-  autogenerate_revision_name = true
+resource "google_cloud_run_v2_service" "be_service" {
+  name     = var.be_service_name
+  location = var.region
 
   template {
-    metadata {
-      annotations = {
-        "run.googleapis.com/health-check-path" = "/actuator/health"
-      }
+    annotations = {
+      "run.googleapis.com/health-check-path" = "/actuator/health"
     }
 
-    spec {
-      service_account_name = google_service_account.run_sa.email
+    service_account = google_service_account.run_sa.email
 
-      containers {
-        image = var.be_image
+    containers {
+      image = var.be_image
 
-        env {
-          name = "MQTT_BROKER_URL"
-          value_from {
-            secret_key_ref {
-              name = "MQTT_BROKER_URL"
-              key  = "latest"
-            }
+      env {
+        name = "MQTT_BROKER_URL"
+        value_source {
+          secret_key_ref {
+            secret  = "MQTT_BROKER_URL"
+            version = "latest"
           }
         }
+      }
 
-        env {
-          name = "MQTT_WEB_PASSWORD"
-          value_from {
-            secret_key_ref {
-              name = "MQTT_WEB_PASSWORD"
-              key  = "latest"
-            }
+      env {
+        name = "MQTT_WEB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "MQTT_WEB_PASSWORD"
+            version = "latest"
           }
         }
       }
     }
+
+    scaling {
+      max_instance_count = 1
+    }
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
   }
 }
 
-resource "google_cloud_run_service_iam_member" "public_invoker" {
-  service  = google_cloud_run_service.be_service.name
-  location = var.region
+resource "google_cloud_run_v2_service_iam_binding" "public_invoker" {
+  project  = google_cloud_run_v2_service.be_service.project
+  location = google_cloud_run_v2_service.be_service.location
+  name     = google_cloud_run_v2_service.be_service.name
   role     = "roles/run.invoker"
-  member   = "allUsers"
+  members  = ["allUsers"]
 }
