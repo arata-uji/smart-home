@@ -3,6 +3,119 @@ resource "google_compute_network_firewall_policy" "policy" {
   project = var.project
 }
 
+resource "google_compute_network_firewall_policy_rule" "exclude_private_egress" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  description = "Exclude communication with private IP ranges, leaving only Internet traffic to be inspected"
+  priority    = 1000
+  direction   = "EGRESS"
+  action      = "goto_next"
+
+  match {
+    dest_ip_ranges = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+
+    layer4_configs {
+      ip_protocol = "all"
+    }
+  }
+}
+
+resource "google_compute_network_firewall_policy_rule" "exclude_private_ingress" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  description = "Exclude communication with private IP ranges, leaving only Internet traffic to be inspected"
+  priority    = 1001
+  direction   = "INGRESS"
+  action      = "goto_next"
+
+  match {
+    src_ip_ranges = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+
+    layer4_configs {
+      ip_protocol = "all"
+    }
+  }
+}
+
+resource "google_compute_network_firewall_policy_rule" "deny_tor" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  description    = "Deny TOR exit nodes ingress traffic"
+  priority       = 1002
+  direction      = "INGRESS"
+  action         = "deny"
+  enable_logging = false
+
+  match {
+    src_threat_intelligences = ["iplist-tor-exit-nodes"]
+
+    layer4_configs {
+      ip_protocol = "all"
+    }
+  }
+}
+
+resource "google_compute_network_firewall_policy_rule" "deny_known_malicious_ingress" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  description    = "Deny known malicious IPs ingress traffic"
+  priority       = 1003
+  direction      = "INGRESS"
+  action         = "deny"
+  enable_logging = false
+
+  match {
+    src_threat_intelligences = ["iplist-known-malicious-ips"]
+
+    layer4_configs {
+      ip_protocol = "all"
+    }
+  }
+}
+
+# 例：1004 (egress) — Deny known malicious IPs (egress)
+resource "google_compute_network_firewall_policy_rule" "deny_known_malicious_egress" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  priority       = 1004
+  direction      = "EGRESS"
+  action         = "deny"
+  enable_logging = false
+
+  match {
+    dest_threat_intelligences = ["iplist-known-malicious-ips"]
+
+    layer4_configs {
+      ip_protocol = "all"
+    }
+  }
+}
+
+# 例：1005 (ingress) — Deny sanctioned countries (geolocation)
+resource "google_compute_network_firewall_policy_rule" "deny_sanctioned_countries" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  priority       = 1005
+  direction      = "INGRESS"
+  action         = "deny"
+  enable_logging = false
+
+  match {
+    src_region_codes = ["CU", "IR", "KP", "SY", "XC", "XD"]
+
+    layer4_configs {
+      ip_protocol = "all"
+    }
+  }
+}
+
+
 resource "google_compute_network_firewall_policy_rule" "allow_http_https_mqtt" {
   project         = var.project
   firewall_policy = google_compute_network_firewall_policy.policy.id
@@ -11,7 +124,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_http_https_mqtt" {
   priority       = 2000
   direction      = "INGRESS"
   action         = "allow"
-  enable_logging = true
+  enable_logging = false
 
   match {
     src_ip_ranges = ["0.0.0.0/0"]
