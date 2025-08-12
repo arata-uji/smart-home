@@ -4,6 +4,12 @@ data "google_compute_address" "mqtt_broker_ip" {
   region  = var.region
 }
 
+data "google_compute_address" "mqtt_broker_internal_ip" {
+  name    = "mqtt-broker-internal-ip"
+  project = var.project
+  region  = var.region
+}
+
 resource "google_compute_instance" "mqtt_broker" {
   project      = var.project
   zone         = var.zone
@@ -12,6 +18,8 @@ resource "google_compute_instance" "mqtt_broker" {
 
   network_interface {
     subnetwork = var.subnet
+    network_ip = sensitive(data.google_compute_address.mqtt_broker_internal_ip.address)
+
     access_config {
       nat_ip = sensitive(data.google_compute_address.mqtt_broker_ip.address)
     }
