@@ -156,11 +156,11 @@ resource "google_compute_network_firewall_policy_rule" "allow_ssh_ingress_from_i
   }
 }
 
-resource "google_compute_network_firewall_policy_rule" "allow_http_https_mqtt" {
+resource "google_compute_network_firewall_policy_rule" "allow_mqtt_ingress_from_anywhere" {
   project         = var.project
   firewall_policy = google_compute_network_firewall_policy.policy.id
 
-  description    = "Allow HTTP/HTTPS and MQTT(1883) from anywhere"
+  description    = "Allow MQTT from anywhere"
   priority       = 2001
   direction      = "INGRESS"
   action         = "allow"
@@ -171,13 +171,13 @@ resource "google_compute_network_firewall_policy_rule" "allow_http_https_mqtt" {
 
     layer4_configs {
       ip_protocol = "tcp"
-      ports       = ["80", "443", "1883"]
+      ports       = ["1883"]
     }
   }
 }
 
 data "google_compute_network" "default" {
-  name    = "default"
+  name    = var.vpc_network
   project = var.project
 }
 

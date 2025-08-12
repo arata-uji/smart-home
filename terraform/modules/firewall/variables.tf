@@ -14,3 +14,9 @@ variable "subnet_cidr" {
   type        = string
   default     = "10.138.0.0/20"
 }
+
+variable "vpc_network" {
+  description = "VPCネットワーク名"
+  type        = string
+  default     = "default"
+}
