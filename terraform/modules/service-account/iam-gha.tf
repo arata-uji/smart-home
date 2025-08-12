@@ -22,3 +22,9 @@ resource "google_project_iam_member" "gha_secrets" {
   role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${google_service_account.gha.email}"
 }
+
+resource "google_project_iam_member" "gha_cloudrun" {
+  project = var.project
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.gha.email}"
+}
