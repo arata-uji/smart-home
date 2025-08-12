@@ -3,6 +3,27 @@ resource "google_compute_network_firewall_policy" "policy" {
   project = var.project
 }
 
+resource "google_compute_network_firewall_policy_rule" "allow_mqtt_ingress_from_cloudrun" {
+  project         = var.project
+  firewall_policy = google_compute_network_firewall_policy.policy.id
+
+  description    = "Allow private MQTT ingress to VM from Cloud Run"
+  priority       = 900
+  direction      = "INGRESS"
+  action         = "allow"
+  enable_logging = false
+
+  match {
+    src_ip_ranges  = [var.subnet_cidr]
+    dest_ip_ranges = [var.subnet_cidr]
+
+    layer4_configs {
+      ip_protocol = "tcp"
+      ports       = ["1883"]
+    }
+  }
+}
+
 resource "google_compute_network_firewall_policy_rule" "exclude_private_egress" {
   project         = var.project
   firewall_policy = google_compute_network_firewall_policy.policy.id
