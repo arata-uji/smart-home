@@ -36,6 +36,15 @@ resource "google_cloud_run_v2_service" "be_service" {
     scaling {
       max_instance_count = 1
     }
+
+    vpc_access {
+      egress = var.vpc_egress
+
+      network_interfaces {
+        network    = var.vpc_network
+        subnetwork = var.vpc_subnet
+      }
+    }
   }
 
   traffic {

@@ -19,3 +19,21 @@ variable "be_image" {
   type        = string
   default     = "ujimatcha/smart-home-be:latest"
 }
+
+variable "vpc_network" {
+  description = "VPCネットワーク名"
+  type        = string
+  default     = "default"
+}
+
+variable "vpc_subnet" {
+  description = "VPCサブネット名"
+  type        = string
+  default     = "default"
+}
+
+variable "vpc_egress" {
+  description = "VPC egress設定（ALL_TRAFFICまたはPRIVATE_RANGES_ONLY）"
+  type        = string
+  default     = "PRIVATE_RANGES_ONLY"
+}
