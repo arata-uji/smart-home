@@ -34,7 +34,6 @@ variable "machine_type" {
 variable "startup_script" {
   description = "インスタンス起動時に実行するスクリプト"
   type        = string
-  sensitive   = true
   default     = <<-EOT
     #!/bin/bash
     apt update
