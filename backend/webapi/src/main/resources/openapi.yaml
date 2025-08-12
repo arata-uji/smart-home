@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI 3.0
+  version: 1.0.12
+paths:
+  /hello_world:
+    get:
+      tags:
+        - HelloWorldGet
+      summary: Returns a Hello World message
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Hello, World!
+  /mqtt_publish:
+    post:
+      tags:
+        - MqttPublishPost
+      summary: MQTTブローカにメッセージをpublishする
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic
+                - payload
+              properties:
+                topic:
+                  type: string
+                  example: "room-01/light"
+                payload:
+                  type: string
+                  example: "light:switch"
+      responses:
+        "200":
+          description: publish成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "MQTT Publish Scheduled"

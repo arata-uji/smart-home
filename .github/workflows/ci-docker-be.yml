@@ -1,0 +1,55 @@
+name: Backend CI & Docker Build
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - "backend/webapi/**"
+      - ".github/workflows/ci-docker-be.yml"
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17 (Corretto)
+        uses: actions/setup-java@v3
+        with:
+          distribution: "corretto"
+          java-version: "17"
+          cache: gradle
+
+      - name: Ensure gradlew is executable
+        run: chmod +x backend/webapi/gradlew
+
+      - name: Build with Gradle
+        working-directory: backend/webapi
+        run: ./gradlew clean bootJar --no-daemon
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: backend/webapi
+          file: backend/webapi/Dockerfile
+          push: true
+          tags: |
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/smart-home-be:latest
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/smart-home-be:${{ github.sha }}
