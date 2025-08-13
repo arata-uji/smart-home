@@ -69,9 +69,15 @@ mosquitto_sub -h <MQTTブローカのIPアドレス> -t room-01/light -u control
 ```
 
 ### スクリプト
-以下2つのPythonスクリプトを用意する。
+以下2つのPythonスクリプトを用意する。今回はホームディレクトリ`/home/raspberrypi/`に配置する。
 - irrp.py: 赤外線信号を学習し、赤外線信号を出力する。
 - subscriber.py: MQTT Subscribeを行い、受信したメッセージに応じて出力する赤外線信号を制御する。
+
+### 証明書
+相互TLS認証を行うために、以下の証明書を用意する。今回は`/home/raspberrypi/certs`に配置する。
+- ca.crt: CA証明書
+- client-controller-xx.crt: クライアント証明書（xxはナンバリング）
+- client-controller-xx.key: クライアントキー（xxはナンバリング）
 
 ### 赤外線信号の学習
 赤外線信号を学習するために、以下の手順を実行する。
