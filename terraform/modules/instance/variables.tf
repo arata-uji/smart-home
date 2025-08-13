@@ -39,9 +39,17 @@ variable "startup_script" {
     apt update
     apt install -y mosquitto mosquitto-clients
 
-    # Secretを取得
+    # パスワードをSecretから取得
     MQTT_WEB_PASSWORD=$(gcloud secrets versions access latest --secret="MQTT_WEB_PASSWORD" --format='get(payload.data)' | base64 --decode)
     MQTT_CTRL_PASSWORD=$(gcloud secrets versions access latest --secret="MQTT_CTRL_PASSWORD" --format='get(payload.data)' | base64 --decode)
+
+    # 自身の内部IPアドレスを取得
+    INTERNAL_IP=$(curl -sf -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
+
+    # 証明書系をSecretから取得
+    gcloud secrets versions access latest --secret="MQTT_CA_CRT" --format='get(payload.data)' | base64 --decode  > /etc/mosquitto/certs/ca.crt
+    gcloud secrets versions access latest --secret="MQTT_SERVER_CRT" --format='get(payload.data)' | base64 --decode > /etc/mosquitto/certs/server.crt
+    gcloud secrets versions access latest --secret="MQTT_SERVER_KEY" --format='get(payload.data)' | base64 --decode  > /etc/mosquitto/certs/server.key
 
     # ユーザとパスワード設定
     mosquitto_passwd -b -c /etc/mosquitto/passwd web $${MQTT_WEB_PASSWORD}
@@ -74,10 +82,22 @@ variable "startup_script" {
     log_dest file /var/log/mosquitto/mosquitto.log
     include_dir /etc/mosquitto/conf.d
     user mosquitto
-    listener 1883
+
+    # 内部向けリスナー（CloudRun）
+    listener 1883 $${INTERNAL_IP}
     allow_anonymous false
     password_file /etc/mosquitto/passwd
     acl_file /etc/mosquitto/acl
+
+    # 外部向けリスナー（RasPi）
+    listener 8883
+    allow_anonymous false
+    password_file /etc/mosquitto/passwd
+    acl_file /etc/mosquitto/acl
+    require_certificate true
+    cafile /etc/mosquitto/certs/ca.crt
+    certfile /etc/mosquitto/certs/server.crt
+    keyfile /etc/mosquitto/certs/server.key
     EOF
 
     chown mosquitto:mosquitto /etc/mosquitto/mosquitto.conf
