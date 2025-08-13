@@ -75,6 +75,7 @@ variable "startup_script" {
     EOF
 
     chown mosquitto:mosquitto /etc/mosquitto/acl
+    chmod 700 /etc/mosquitto/acl
 
     # 設定ファイルの書き換え
     cat <<-EOF > /etc/mosquitto/mosquitto.conf
