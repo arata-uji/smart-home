@@ -47,16 +47,15 @@ variable "startup_script" {
     INTERNAL_IP=$(curl -sf -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
 
     # 証明書系をSecretから取得
-    gcloud secrets versions access latest --secret="MQTT_CA_CRT" --format='get(payload.data)' | base64 --decode  > /etc/mosquitto/certs/ca.crt
+    gcloud secrets versions access latest --secret="MQTT_CA_CRT" --format='get(payload.data)' | base64 --decode > /etc/mosquitto/certs/ca.crt
     gcloud secrets versions access latest --secret="MQTT_SERVER_CRT" --format='get(payload.data)' | base64 --decode > /etc/mosquitto/certs/server.crt
-    gcloud secrets versions access latest --secret="MQTT_SERVER_KEY" --format='get(payload.data)' | base64 --decode  > /etc/mosquitto/certs/server.key
+    gcloud secrets versions access latest --secret="MQTT_SERVER_KEY" --format='get(payload.data)' | base64 --decode > /etc/mosquitto/certs/server.key
     chown mosquitto:mosquitto /etc/mosquitto/certs/*
     chmod 600 /etc/mosquitto/certs/server.key
     chmod 640 /etc/mosquitto/certs/server.crt /etc/mosquitto/certs/ca.crt
 
     # ユーザとパスワード設定
     mosquitto_passwd -b -c /etc/mosquitto/passwd web $${MQTT_WEB_PASSWORD}
-    mosquitto_passwd -b /etc/mosquitto/passwd controller-01 $${MQTT_CTRL_PASSWORD}
     chown mosquitto:mosquitto /etc/mosquitto/passwd
 
     # ACL設定
