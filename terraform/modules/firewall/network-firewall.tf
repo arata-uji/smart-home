@@ -171,7 +171,7 @@ resource "google_compute_network_firewall_policy_rule" "allow_mqtt_ingress_from_
 
     layer4_configs {
       ip_protocol = "tcp"
-      ports       = ["1883"]
+      ports       = ["8883"]
     }
   }
 }
