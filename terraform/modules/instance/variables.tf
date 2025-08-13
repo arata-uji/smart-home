@@ -41,7 +41,6 @@ variable "startup_script" {
 
     # パスワードをSecretから取得
     MQTT_WEB_PASSWORD=$(gcloud secrets versions access latest --secret="MQTT_WEB_PASSWORD" --format='get(payload.data)' | base64 --decode)
-    MQTT_CTRL_PASSWORD=$(gcloud secrets versions access latest --secret="MQTT_CTRL_PASSWORD" --format='get(payload.data)' | base64 --decode)
 
     # 自身の内部IPアドレスを取得
     INTERNAL_IP=$(curl -sf -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
