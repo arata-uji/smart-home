@@ -9,9 +9,10 @@ import pigpio
 
 # === 設定セクション ===
 BROKER_HOST = ""  # TODO: MQTTブローカーのホスト名またはIPアドレス
-BROKER_PORT = 1883
-MQTT_USER = "" # TODO: MQTTブローカーのコントローラー側のユーザー名
-MQTT_PASS = "" # TODO: MQTTブローカーのコントローラー側のパスワード
+BROKER_PORT = 8883
+CA_CRT = "/home/raspberrypi/certs/ca.crt"
+CLIENT_CRT = "/home/raspberrypi/certs/client-controller-xx.crt"  # TODO: クライアント証明書のパス（xxはナンバリング）
+CLIENT_KEY = "/home/raspberrypi/certs/client-controller-xx.key"  # TODO: クライアントキーのパス（xxはナンバリング）
 TOPICS = [("living/light", 0), ("living/aircon", 0)]  # QoS=0に変更（速度重視）
 GPIO_PIN = 17  # 赤外線送信用GPIO
 CODES_FILE = "/home/raspberrypi/codes.json"
@@ -160,7 +161,12 @@ def main():
 
     # MQTTクライアント設定
     client = mqtt.Client()
-    client.username_pw_set(MQTT_USER, MQTT_PASS)
+    client.tls_set(
+        ca_certs=CA_CRT,
+        certfile=CLIENT_CRT,
+        keyfile=CLIENT_KEY,
+    )
+    client.tls_insecure_set(False)
     client.on_connect = on_connect
     client.on_message = on_message
 
