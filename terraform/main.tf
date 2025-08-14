@@ -25,3 +25,8 @@ module "firewall" {
   source  = "./modules/firewall"
   project = var.project
 }
+
+module "tfstate_store" {
+  source  = "./modules/tfstate-store"
+  region  = var.region
+}

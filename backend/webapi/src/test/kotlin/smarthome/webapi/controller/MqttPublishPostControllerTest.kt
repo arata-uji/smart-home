@@ -14,7 +14,7 @@ class MqttPublishPostControllerTest {
   @Autowired private lateinit var controller: MqttPublishPostController
 
   @Test
-  @DisplayName("MQTTブローカへのpublishが成功したときにメッセージ付きの200レスポンスを返すこと")
+  @DisplayName("MQTTブローカーへのpublishが成功したときにメッセージ付きの200レスポンスを返すこと")
   fun testMqttPublishPostController() {
     // given
     val request = MqttPublishPostRequest(topic = "room-01/light", payload = "light:on")

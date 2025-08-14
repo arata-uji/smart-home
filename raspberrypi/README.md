@@ -23,8 +23,8 @@
 
 最初はブレッドボードで動作確認するが、最終的には、はんだごてを使って配線を固定する必要がある。そのため、はんだごて一式も手元になければ購入する必要がある。
 
-### MQTTブローカとWeb API
-家のWi-Fiに自身のスマホなどが接続していない状態、つまり家の外からRaspberry Piを操作するためにはひと工夫が必要である。Raspberry Pi以外にも、MQTTブローカ、そこにメッセージをPublishするWeb APIが必要である。Raspberry PiはMQTTブローカにメッセージをSubscribeし、ブローカを中継地点とすることで家電を操作する。詳細は～～～を参照。
+### MQTTブローカーとWeb API
+家のWi-Fiに自身のスマホなどが接続していない状態、つまり家の外からRaspberry Piを操作するためにはひと工夫が必要である。Raspberry Pi以外にも、MQTTブローカー、そこにメッセージをPublishするWeb APIが必要である。Raspberry PiはMQTTブローカーにメッセージをSubscribeし、ブローカーを中継地点とすることで家電を操作する。詳細は～～～を参照。
 
 ## Raspberry Piのセットアップ
 Raspberry Piを疑似リモコンとして使用するためのセットアップ手順を以下に示す。
@@ -65,7 +65,7 @@ pip3 install paho-mqtt pigpio
 ### 動作確認
 Subscribeが正常に動作するか確認するために、以下のコマンドを実行する。
 ```
-mosquitto_sub -h <MQTTブローカのIPアドレス> -t room-01/light -u controller-01 -P <コントローラ側のパスワード>
+mosquitto_sub -h <MQTTブローカーのIPアドレス> -t room-01/light -u controller-01 -P <コントローラ側のパスワード>
 ```
 
 ### スクリプト
