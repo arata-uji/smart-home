@@ -15,14 +15,6 @@ resource "google_secret_manager_secret" "mqtt_web_password" {
   }
 }
 
-resource "google_secret_manager_secret" "mqtt_ctrl_password" {
-  project   = var.project
-  secret_id = "MQTT_CTRL_PASSWORD"
-  replication {
-    auto {}
-  }
-}
-
 resource "google_secret_manager_secret" "mqtt_ca_crt" {
   project   = var.project
   secret_id = "MQTT_CA_CRT"
