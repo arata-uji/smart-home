@@ -23,7 +23,7 @@ paths:
     post:
       tags:
         - MqttPublishPost
-      summary: MQTTブローカにメッセージをpublishする
+      summary: MQTTブローカーにメッセージをpublishする
       requestBody:
         required: true
         content:
