@@ -2,7 +2,7 @@ name: Backend CI & Docker Build
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths:
       - "backend/webapi/**"
       - ".github/workflows/ci-docker-be.yml"
